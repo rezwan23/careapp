@@ -1,0 +1,11 @@
+{
+  "expo": {
+    "name": "CareApp",
+    "slug": "CareApp",
+    "version": "1.0.0",
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  },
+  "name": "CareApp"
+}
