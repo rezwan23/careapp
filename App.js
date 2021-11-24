@@ -1,12 +1,35 @@
 import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useState } from 'react';
+import { 
+  StyleSheet, 
+  Text, 
+  View,
+  Button 
+} from 'react-native';
 
 export default function App() {
+
+  const buttonChangeName = () => {
+    if(name == 'Istiak'){
+      setName('Ghani')
+    }else{
+      setName('Istiak')
+    }
+    setCounter(counter + 1)
+  }
+
+  const [name, setName] = useState('Mash')
+
+  const [counter, setCounter] = useState(0)
+
   return (
     <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
+      <Text style={styles.text}>{name}</Text>
+      <Text style={styles.text}>{counter}</Text>
+      <Button 
+      onPress={() => buttonChangeName()}
+        title="Change Name"
+      />
     </View>
   );
 }
@@ -14,8 +37,12 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#000',
     alignItems: 'center',
     justifyContent: 'center',
   },
+  text : {
+    fontSize : 70,
+    color : '#fff'
+  }
 });
