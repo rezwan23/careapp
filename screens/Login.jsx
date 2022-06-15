@@ -1,5 +1,5 @@
 import { StatusBar } from "expo-status-bar";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
   Text,
@@ -10,12 +10,58 @@ import {
   StatusBar as SB
 } from "react-native";
 
+import * as SecureStore from 'expo-secure-store';
+import axios from "axios";
+
+
+
+async function save(key, value) {
+  await SecureStore.setItemAsync(key, value);
+}
+
+
 
 
 
 export default function Login({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  useEffect(() => {
+    getUser()
+  })
+
+  async function login() {
+    axios.get(`http://ca.theshineday.com/api/login?email=${email}&password=${password}`)
+      .then(res => {
+        save('user', JSON.stringify(res.data.user))
+        save('user', res.data.token)
+        if (Object.keys(res.data.user).length) {
+          navigation.navigate('Home')
+        }
+      }).catch(err => {
+        alert(err.response.status == 422 ? err.response.data.message : 'Ops! Error')
+      })
+
+  }
+
+  async function getUser() {
+    let token = await SecureStore.getItemAsync('token');
+    if (token) {
+      axios.get('http://ca.theshineday.com/api/user', { headers: { "Authorization": `Bearer ${token}` } })
+        .then(res => {
+          save('user', JSON.stringify(res.data))
+          if (Object.keys(res.data).length) {
+            navigation.navigate('Home')
+          }
+        }).catch(err => {
+          if(err.response.status == 422){
+            alert(err.response.data.message)
+          }
+        })
+    }
+
+  }
 
   return (
     <View style={styles.container}>
@@ -43,7 +89,7 @@ export default function Login({ navigation }) {
       </View>
 
 
-      <TouchableOpacity onPress={() => navigation.navigate('Home')} style={styles.loginBtn}>
+      <TouchableOpacity onPress={() => login} style={styles.loginBtn}>
         <Text style={styles.loginText}>LOGIN</Text>
       </TouchableOpacity>
 
@@ -60,10 +106,10 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",
-    borderWidth : 5,
-    borderColor : '#4999d4',
-    borderRadius : 10,
-    margin : 10,
+    borderWidth: 5,
+    borderColor: '#4999d4',
+    borderRadius: 10,
+    margin: 10,
     marginTop: SB.currentHeight || 0,
   },
   headerText: {
@@ -114,11 +160,11 @@ const styles = StyleSheet.create({
     height: 50,
     alignItems: "center",
     justifyContent: "center",
-    marginBottom : 20,
+    marginBottom: 20,
     backgroundColor: "#4999d4",
   },
   loginText: {
     color: '#fff',
-    fontWeight : 'bold'
+    fontWeight: 'bold'
   }
 });

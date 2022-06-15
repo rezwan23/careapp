@@ -1,5 +1,5 @@
 import { StatusBar } from "expo-status-bar";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
   Text,
@@ -10,17 +10,42 @@ import {
   StatusBar as SB
 } from "react-native";
 
-import {Picker} from '@react-native-picker/picker';
+import * as SecureStore from 'expo-secure-store';
+
+import { Picker } from '@react-native-picker/picker';
+import axios from "axios";
+
+
+async function save(key, value) {
+  await SecureStore.setItemAsync(key, value);
+}
 
 
 
-export default function Register({navigation}) {
+
+export default function Register({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [gender, setGender] = useState("male");
   const [age, setAge] = useState("");
   const [userType, setUserType] = useState("patient");
+
+
+
+  function register() {
+    axios.get(`http://ca.theshineday.com/api/register-new-user?name=${name}&email=${email}&gender=${gender}&age=${age}&type=${userType}&password=${password}&password_confirmation=${password}`)
+      .then(res => {
+        save('user', JSON.stringify(res.data.user))
+        save('token', res.data.token.plainTextToken)
+        if(Object.keys(res.data.user).length){
+          navigation.navigate('Home')
+        }
+      })
+      .catch(err => {
+        alert(err.response.status == 422 ? err.response.data.message : 'Ops! Error')
+      })
+  }
 
   return (
     <View style={styles.container}>
@@ -36,7 +61,15 @@ export default function Register({navigation}) {
           onChangeText={(name) => setName(name)}
         />
       </View>
-      
+      <View style={styles.inputView}>
+        <TextInput
+          style={styles.TextInput}
+          placeholder="Email."
+          placeholderTextColor="#000"
+          onChangeText={(email) => setEmail(email)}
+        />
+      </View>
+
       <View style={styles.inputView}>
         <View style={styles.picker}>
           <Picker
@@ -96,7 +129,7 @@ export default function Register({navigation}) {
         />
       </View>
 
-      <TouchableOpacity style={styles.loginBtn}>
+      <TouchableOpacity style={styles.loginBtn} onPress={register}>
         <Text style={styles.loginText}>REGISTER</Text>
       </TouchableOpacity>
 
@@ -113,21 +146,21 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",
-    borderWidth : 5,
-    borderColor : '#4999d4',
-    borderRadius : 10,
-    margin : 10,
+    borderWidth: 5,
+    borderColor: '#4999d4',
+    borderRadius: 10,
+    margin: 10,
     marginTop: SB.currentHeight || 0,
   },
   headerText: {
     fontSize: 40,
     color: '#4999d4',
     fontWeight: 'bold',
-    padding: 20
+    padding: 10
   },
 
   image: {
-    marginBottom: 40,
+    marginBottom: 10,
     width: 100,
     height: 100,
     resizeMode: 'stretch',
@@ -166,14 +199,14 @@ const styles = StyleSheet.create({
     height: 50,
     alignItems: "center",
     justifyContent: "center",
-    marginBottom : 20,
+    marginBottom: 20,
     backgroundColor: "#4999d4",
   },
   loginText: {
     color: '#fff',
-    fontWeight : 'bold'
+    fontWeight: 'bold'
   },
-  picker : {
+  picker: {
     borderWidth: 3,
     borderColor: '#4999d4',
     borderRadius: 100,
