@@ -27,16 +27,14 @@ export default function Login({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  useEffect(() => {
-    getUser()
-  })
+ 
 
-  async function login() {
+  function login() {
     axios.get(`http://ca.theshineday.com/api/login?email=${email}&password=${password}`)
       .then(res => {
-        save('user', JSON.stringify(res.data.user))
-        save('user', res.data.token)
         if (Object.keys(res.data.user).length) {
+          save('user', JSON.stringify(res.data.user))
+          save('token', res.data.token)
           navigation.navigate('Home')
         }
       }).catch(err => {
@@ -45,17 +43,22 @@ export default function Login({ navigation }) {
 
   }
 
+
+  useEffect(() => {
+    getUser()
+  })
+
   async function getUser() {
     let token = await SecureStore.getItemAsync('token');
     if (token) {
       axios.get('http://ca.theshineday.com/api/user', { headers: { "Authorization": `Bearer ${token}` } })
         .then(res => {
-          save('user', JSON.stringify(res.data))
           if (Object.keys(res.data).length) {
+            save('user', JSON.stringify(res.data))
             navigation.navigate('Home')
           }
         }).catch(err => {
-          if(err.response.status == 422){
+          if (err.response.status == 422) {
             alert(err.response.data.message)
           }
         })
@@ -89,7 +92,7 @@ export default function Login({ navigation }) {
       </View>
 
 
-      <TouchableOpacity onPress={() => login} style={styles.loginBtn}>
+      <TouchableOpacity onPress={login} style={styles.loginBtn}>
         <Text style={styles.loginText}>LOGIN</Text>
       </TouchableOpacity>
 

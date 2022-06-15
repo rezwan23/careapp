@@ -8,6 +8,7 @@ import { createMaterialBottomTabNavigator } from '@react-navigation/material-bot
 import { NavigationContainer } from "@react-navigation/native";
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5'
 import NewsFeed from "./NewsFeed";
+import NewPost from "./NewPost";
 
 
 const Tab = createMaterialBottomTabNavigator();
@@ -27,7 +28,7 @@ export default function Home({ navigation }) {
                         } else if (route.name == 'profile') {
                             iconName = 'user'
                         } else {
-                            iconName = 'search'
+                            iconName = 'plus'
                         }
                         size = 20
                         color = focused ? '#4999d4' : '#000'
@@ -45,7 +46,7 @@ export default function Home({ navigation }) {
                 barStyle={ styles.navBar }
             >
                 <Tab.Screen name="newsFeed" component={NewsFeed} />
-                <Tab.Screen name="search" component={NewsFeed} />
+                <Tab.Screen name="new" component={NewPost} />
                 <Tab.Screen name="profile" component={NewsFeed} />
             </Tab.Navigator>
         </NavigationContainer>
