@@ -55,7 +55,7 @@ export default function Login({ navigation }) {
         .then(res => {
           if (Object.keys(res.data).length) {
             save('user', JSON.stringify(res.data))
-            navigation.navigate('Home')
+            navigation.navigate('Home', {toFetch : true})
           }
         }).catch(err => {
           if (err.response.status == 422) {

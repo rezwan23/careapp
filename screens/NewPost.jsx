@@ -6,19 +6,25 @@ import axios from 'axios'
 import * as SecureStore from 'expo-secure-store';
 
 
-const App = ({ navigation }) => {
+const App = ({route, navigation }) => {
 
   const [user, setUser] = useState({})
   const [post, setPost] = useState('')
 
 
   useEffect(() => {
-    getUser();
+    if(typeof route.params !== 'undefined'){
+      const { toFetch } = route.params
+      if(toFetch){
+        getUser();
+      }
+    }
   })
 
   async function getUser() {
     let user = await SecureStore.getItemAsync('user');
     setUser(JSON.parse(user))
+    route.params.toFetch = false
   }
 
   async function createPost() {
@@ -30,7 +36,7 @@ const App = ({ navigation }) => {
         }
       })
         .then(res => {
-          navigation.navigate('newsFeed')
+          navigation.navigate('newsFeed', {toFetch : true})
         }).catch(err => {
           console.debug(err)
           alert(err.response.status == 422 ? err.response.data.message : 'Opss! error')

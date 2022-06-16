@@ -1,6 +1,11 @@
-import React, { useState } from 'react';
-import { SafeAreaView, View, FlatList, StyleSheet, Text, StatusBar, Image } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { SafeAreaView, View, FlatList, StyleSheet, Text, StatusBar, Image, TouchableOpacity } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5'
+
+import axios from 'axios';
+
+import * as SecureStore from 'expo-secure-store';
+
 
 const DATA = [
   {
@@ -33,49 +38,89 @@ const DATA = [
 ];
 
 
-const App = () => {
+const App = ({route, navigation }) => {
 
-  const [data, setData] = useState(DATA)
+  const [data, setData] = useState([])
 
-  const renderItem = ({ item }) => (
-    <View style={{ marginTop: StatusBar.currentHeight || 0 }}>
-      <View style={styles.singleItemWrapper}>
-        <View style={styles.itemWrapperTop}>
-          <Image style={styles.userImage} source={require('../assets/user1.png')}></Image>
-          <View style={styles.userText}>
-            <Text style={styles.itemWrapperTopText}>{item.user.name}</Text>
-            <Text style={styles.itemWrapperBottomText}>1 hr</Text>
+
+  function comment(postId){
+    navigation.navigate('comment', {postId : postId});
+  }
+
+
+  useEffect(() => {
+    if (typeof route.params !== 'undefined') {
+      const { toFetch } = route.params
+      if (toFetch) {
+        getPosts()
+      }
+    }
+  })
+
+  async function getPosts() {
+    let token = await SecureStore.getItemAsync('token');
+    axios.get(`http://ca.theshineday.com/api/posts`, {
+      headers: {
+        authorization: `Bearer ${token}`
+      }
+    })
+      .then(res => {
+        setData(res.data)
+      }).catch(err => {
+        alert('Opps Error!')
+        console.debug(err.response.data.message)
+      })
+    // setFetch(false)
+    route.params = false
+  }
+
+  
+
+  const renderItem = ({ item }) => {
+    return (
+      <View style={{ marginTop: StatusBar.currentHeight || 0 }}>
+        <View style={styles.singleItemWrapper}>
+          <View style={styles.itemWrapperTop}>
+            <Image style={styles.userImage} source={require('../assets/user1.png')}></Image>
+            <View style={styles.userText}>
+              <Text style={styles.itemWrapperTopText}>{item.user.name}</Text>
+              <Text style={styles.itemWrapperBottomText}>{item.created_at}</Text>
+            </View>
           </View>
         </View>
+        <View style={styles.singleItemMiddle}>
+          <Text style={styles.singleItemMiddleText}>{item.post}</Text>
+        </View>
+        <View style={[styles.singleItemBottom]}>
+          <TouchableOpacity onPress={() => {
+            comment(item.id)
+          }}>
+            <FontAwesome5
+              name={'comments'}
+              size={23}
+              color={'#cacccf'}
+            />
+          </TouchableOpacity>
+          <Text style={{ marginLeft: 10, color: '#3e4e6b' }}>{item.comments.length} Comments</Text>
+          {
+            item.id == 1 ?
+              <Text style={styles.postPredictionWarning}>Threat</Text>
+              : null
+          }
+          {
+            item.id == 2 ?
+              <Text style={styles.postPredictionNormal}>Normal</Text>
+              : null
+          }
+          {
+            item.id == 3 ?
+              <Text style={styles.postPredictionWarning}>Threat</Text>
+              : null
+          }
+        </View>
       </View>
-      <View style={styles.singleItemMiddle}>
-        <Text style={styles.singleItemMiddleText}>{item.post}</Text>
-      </View>
-      <View style={[styles.singleItemBottom]}>
-        <FontAwesome5
-          name={'comments'}
-          size={23}
-          color={'#cacccf'}
-        />
-        <Text style={{ marginLeft: 10, color: '#3e4e6b' }}>2 Comments</Text>
-        {
-          item.id == 1 ?
-            <Text style={styles.postPredictionWarning}>Threat</Text>
-            : null
-        }
-        {
-          item.id == 2 ?
-            <Text style={styles.postPredictionNormal}>Normal</Text>
-            : null
-        }
-        {
-          item.id == 3 ?
-            <Text style={styles.postPredictionWarning}>Threat</Text>
-            : null
-        }
-      </View>
-    </View>
-  );
+    )
+  } 
 
   return (
     <SafeAreaView style={styles.container}>
