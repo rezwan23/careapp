@@ -32,10 +32,13 @@ export default class App extends Component {
       const { toFetch } = this.props.route.params
       if (toFetch) {
         let token = await SecureStore.getItemAsync('token');
+        let user = await SecureStore.getItemAsync('user');
         if (token) {
           this.state.token = token
         }
-        console.debug(this.state.token)
+        if(user){
+          this.state.user = user
+        }
       }
     }
     this.props.route.params.toFetch = false
@@ -48,14 +51,18 @@ export default class App extends Component {
     } = this.state;
 
     return (
-      <View style={{ marginTop: 200 }}>
+      <View style={{ marginTop: 50, flex: 1, flexDirection: 'column', padding: 25 }}>
         <StatusBar barStyle="default" />
+        <View>
+          <Text style={{fontSize:30, marginBottom : 20, textAlign:'center', fontWeight : 'bold'}}>Edit Profile Picture</Text>
+        </View>
 
-
-        <Button
-          onPress={this._pickImage}
-          title="Pick an image from gallery"
-        />
+        <View style={{ marginBottom : 10}}>
+          <Button
+            onPress={this._pickImage}
+            title="Pick an image from gallery"
+          />
+        </View>
 
         <Button onPress={this._takePhoto} title="Take a photo" />
         {this._maybeRenderImage()}
@@ -144,7 +151,7 @@ export default class App extends Component {
     if (cameraRollPerm === 'granted') {
       let pickerResult = await ImagePicker.launchImageLibraryAsync({
         allowsEditing: true,
-        aspect: [4, 3],
+        aspect: [3, 3],
       });
 
       this._handleImagePicked(pickerResult);
@@ -185,13 +192,18 @@ export default class App extends Component {
           authorization: `Bearer ${token}`,
           'content-type': 'multipart/form-data',
         },
-      }).then( res => {
-        console.debug('res.data')
+      }).then(({ data }) => {
+        console.debug(data)
+        axios.get(`http://ca.theshineday.com/api/user`)
+        .then( ({data}) => {
+          SecureStore.setItemAsync('user', data);
+        })
         this.setState({
           uploading: false
         });
-      }).catch( err => {
-        console.debug(err.response.status)
+        this.props.navigation.navigate('newsFeed', { toFetch: true, fetchUser : true })
+      }).catch(err => {
+        console.debug(err.response.data.message)
       })
 
     }

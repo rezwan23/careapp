@@ -99,41 +99,62 @@ const App = ({ route, navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.listView}>
-        <View style={{ marginTop: StatusBar.currentHeight || 0 }}>
-          <View style={styles.singleItemWrapper}>
-            <View style={styles.itemWrapperTop}>
-              <Image style={styles.userImage} source={require('../assets/user1.png')}></Image>
-              <View style={styles.userText}>
-                <Text style={styles.itemWrapperTopText}>{user.name}</Text>
+      {Object.keys(post).length > 0
+        ?
+        <View style={styles.listView}>
+          <View style={{ marginTop: StatusBar.currentHeight || 0 }}>
+            <View style={styles.singleItemWrapper}>
+              <View style={styles.itemWrapperTop}>
+                {post.user.photo
+                  ? <Image style={styles.userImage} source={{ uri: `http://ca.theshineday.com/uploads/${post.user.photo}` }}></Image>
+                  : <Image style={styles.userImage} source={require('../assets/user1.png')}></Image>
+                }
+                <View style={styles.userText}>
+                  <Text style={styles.itemWrapperTopText}>{user.name}</Text>
+                </View>
+              </View>
+            </View>
+            <View>
+              <Text style={styles.PostText}> {post.post}</Text>
+            </View>
+            <View
+              style={{ paddingLeft: 25, paddingRight: 25, alignItems: 'center' }}
+            >
+              <TextInput
+                multiline={true}
+                style={styles.TextInput}
+                placeholder=".."
+                placeholderTextColor="#000"
+                onChangeText={(comment) => setComment(comment)}
+              />
+              <TouchableOpacity onPress={createComment} style={styles.loginBtn}>
+                <Text style={styles.loginText}>COMMENT</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+        :
+        <View style={styles.listView}>
+          <View style={{ marginTop: StatusBar.currentHeight || 0 }}>
+            <View style={styles.singleItemWrapper}>
+              <View style={styles.itemWrapperTop}>
+                <View style={styles.userText1}>
+                  <Text style={{ color: '#EF7C8E', fontWeight: 'bold', marginTop: 200, fontSize: 24 }}>Please Select Post</Text>
+                  <TouchableOpacity onPress={() => {navigation.navigate('newsFeed', {toFetch : true})}} style={styles.loginBtn}>
+                    <Text style={styles.loginText}>Back</Text>
+                  </TouchableOpacity>
+                </View>
               </View>
             </View>
           </View>
-          <View>
-            <Text style={styles.PostText}> {post.post}</Text>
-          </View>
-          <View
-            style={{ paddingLeft: 25, paddingRight: 25, alignItems: 'center' }}
-          >
-            <TextInput
-              multiline={true}
-              style={styles.TextInput}
-              placeholder=".."
-              placeholderTextColor="#000"
-              onChangeText={(comment) => setComment(comment)}
-            />
-            <TouchableOpacity onPress={createComment} style={styles.loginBtn}>
-              <Text style={styles.loginText}>COMMENT</Text>
-            </TouchableOpacity>
-          </View>
         </View>
-      </View>
-
+      }
       <FlatList
         data={post.comments}
         renderItem={renderItem}
         keyExtractor={item => item.id}
       />
+
     </SafeAreaView>
   );
 }
@@ -165,7 +186,7 @@ const styles = StyleSheet.create({
   },
   userText: {
     marginTop: 3,
-    marginLeft: 6
+    marginLeft: 6,
   },
   itemWrapperBottomText: {
     color: '#82878c',
@@ -205,7 +226,13 @@ const styles = StyleSheet.create({
   },
   singleItemMiddle: {
     paddingLeft: 30
-  }
+  },
+  userText1: {
+    marginTop: 3,
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
 });
 
 export default App;

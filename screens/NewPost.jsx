@@ -50,7 +50,10 @@ const App = ({route, navigation }) => {
       <View style={{ marginTop: StatusBar.currentHeight || 0 }}>
         <View style={styles.singleItemWrapper}>
           <View style={styles.itemWrapperTop}>
-            <Image style={styles.userImage} source={require('../assets/user1.png')}></Image>
+            {user.photo 
+            ? <Image style={styles.userImage} source={{uri:`http://ca.theshineday.com/uploads/${user.photo}`}}></Image>
+            : <Image style={styles.userImage} source={require('../assets/user1.png')}></Image>
+            }
             <View style={styles.userText}>
               <Text style={styles.itemWrapperTopText}>{user.name}</Text>
             </View>

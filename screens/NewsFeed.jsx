@@ -7,37 +7,6 @@ import axios from 'axios';
 import * as SecureStore from 'expo-secure-store';
 
 
-const DATA = [
-  {
-    id: 1,
-    post: 'I am in Trouble :(',
-    user: {
-      id: 1,
-      name: 'Istiak Uddin',
-      image: '/user.png'
-    }
-  },
-  {
-    id: 2,
-    post: 'I have been suffering from night phobia',
-    user: {
-      id: 1,
-      name: 'Razwanul Ghani',
-      image: '/user.png'
-    }
-  },
-  {
-    id: 3,
-    post: 'I am a teen ager and i am suffering from Height Phobia',
-    user: {
-      id: 1,
-      name: 'Abdul Kader Jony',
-      image: '/user.png'
-    }
-  }
-];
-
-
 const App = ({route, navigation }) => {
 
   const [data, setData] = useState([])
@@ -81,7 +50,7 @@ const App = ({route, navigation }) => {
       <View style={{ marginTop: StatusBar.currentHeight || 0 }}>
         <View style={styles.singleItemWrapper}>
           <View style={styles.itemWrapperTop}>
-            <Image style={styles.userImage} source={require('../assets/user1.png')}></Image>
+            <Image style={styles.userImage} source={{uri:`http://ca.theshineday.com/uploads/${item.user.photo}`}}></Image>
             <View style={styles.userText}>
               <Text style={styles.itemWrapperTopText}>{item.user.name}</Text>
               <Text style={styles.itemWrapperBottomText}>{item.created_at}</Text>
