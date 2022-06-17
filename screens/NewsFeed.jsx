@@ -52,7 +52,7 @@ const App = ({route, navigation }) => {
           <View style={styles.itemWrapperTop}>
             <Image style={styles.userImage} source={{uri:`http://ca.theshineday.com/uploads/${item.user.photo}`}}></Image>
             <View style={styles.userText}>
-              <Text style={styles.itemWrapperTopText}>{item.user.name}</Text>
+              <Text style={styles.itemWrapperTopText}>{item.user.name} - ({item.user.type})</Text>
               <Text style={styles.itemWrapperBottomText}>{item.created_at}</Text>
             </View>
           </View>
@@ -72,18 +72,18 @@ const App = ({route, navigation }) => {
           </TouchableOpacity>
           <Text style={{ marginLeft: 10, color: '#3e4e6b' }}>{item.comments.length} Comments</Text>
           {
-            item.id == 1 ?
+            item.type == 'Threat' ?
               <Text style={styles.postPredictionWarning}>Threat</Text>
               : null
           }
           {
-            item.id == 2 ?
+            item.type == 'Normal'  ?
               <Text style={styles.postPredictionNormal}>Normal</Text>
               : null
           }
           {
-            item.id == 3 ?
-              <Text style={styles.postPredictionWarning}>Threat</Text>
+            item.type == 'Warning'  ?
+              <Text style={styles.postPredictionWarning}>Warning</Text>
               : null
           }
         </View>

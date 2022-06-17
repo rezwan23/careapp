@@ -83,7 +83,7 @@ const App = ({ route, navigation }) => {
         <View style={styles.singleItemWrapper1}>
           <View style={styles.itemWrapperTop}>
             <View style={styles.userText}>
-              <Text style={styles.itemWrapperTopText}>{item.user.name}</Text>
+              <Text style={styles.itemWrapperTopText}>{item.user.name} - ({item.user.type})</Text>
               <Text style={styles.itemWrapperBottomText}>{item.created_at}</Text>
             </View>
           </View>

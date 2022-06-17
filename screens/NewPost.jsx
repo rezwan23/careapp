@@ -36,10 +36,11 @@ const App = ({route, navigation }) => {
         }
       })
         .then(res => {
+          console.debug(res.data)
           navigation.navigate('newsFeed', {toFetch : true})
         }).catch(err => {
           console.debug(err)
-          alert(err.response.status == 422 ? err.response.data.message : 'Opss! error')
+          alert(err.response.status == 422 ? err.response.data.message : err.response.data.message)
         })
     }
 
